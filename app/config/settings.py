@@ -3,11 +3,26 @@ import os
 from datetime import timedelta
 from functools import lru_cache
 from typing import Optional
+from pathlib import Path
 
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 
-load_dotenv(dotenv_path="./.env")
+# Look for .env file in several locations
+possible_env_paths = [
+    "./.env",
+    "./app/.env",
+    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env"),
+    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "app/.env"),
+]
+
+for env_path in possible_env_paths:
+    if os.path.exists(env_path):
+        load_dotenv(dotenv_path=env_path)
+        print(f"Loaded environment from {env_path}")
+        break
+else:
+    print("No .env file found, using environment variables")
 
 
 def setup_logging():

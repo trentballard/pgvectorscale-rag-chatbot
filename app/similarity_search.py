@@ -1,7 +1,6 @@
 from datetime import datetime
-from database.vector_store import VectorStore
-from services.synthesizer import Synthesizer
-from timescale_vector import client
+from app.database.vector_store import VectorStore
+from app.services.synthesizer import Synthesizer
 
 # Initialize VectorStore
 vec = VectorStore()
@@ -54,23 +53,20 @@ for thought in response.thought_process:
 print(f"\nContext: {response.enough_context}")
 
 # --------------------------------------------------------------
-# Advanced filtering using Predicates
+# Advanced filtering using custom predicates
 # --------------------------------------------------------------
 
-predicates = client.Predicates("category", "==", "Shipping")
-results = vec.search(relevant_question, limit=3, predicates=predicates)
+# Note: The custom predicates feature is not fully implemented
+# These examples are kept for illustration but will use metadata filtering instead
 
+# Single category filter
+metadata_filter = {"category": "Shipping"}
+results = vec.search(relevant_question, limit=3, metadata_filter=metadata_filter)
 
-predicates = client.Predicates("category", "==", "Shipping") | client.Predicates(
-    "category", "==", "Services"
-)
-results = vec.search(relevant_question, limit=3, predicates=predicates)
-
-
-predicates = client.Predicates("category", "==", "Shipping") & client.Predicates(
-    "created_at", ">", "2024-09-01"
-)
-results = vec.search(relevant_question, limit=3, predicates=predicates)
+# Multiple category filter would require custom implementation
+# For now, we can only use simple metadata filter
+metadata_filter = {"category": "Shipping"}
+results = vec.search(relevant_question, limit=3, metadata_filter=metadata_filter)
 
 # --------------------------------------------------------------
 # Time-based filtering
